@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Split Video Frames</title>
+    <style>
+        body {
+            background-color: #f0f0f0;
+            background-image: linear-gradient(45deg, #00ffd5, #00ff4c, #008cff, #ff00ff);
+            background-size: 400% 400%;
+            animation: gradientAnimation 10s infinite;
+        }
+
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+    </style>
+</head>
+<body>
+    <input type="file" id="fileInput" accept="video/*">
+    <button id="splitButton">Split Video</button>
+    <div id="videoContainer"></div>
+    <div id="framesContainer"></div>
+
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const splitButton = document.getElementById('splitButton');
+        const videoContainer = document.getElementById('videoContainer');
+        const framesContainer = document.getElementById('framesContainer');
+
+        fileInput.addEventListener('change', function(event) {
+            const file = event.target.files[0];
+
+            if (!file) {
+                return;
+            }
+
+            // Remove existing video and frames
+            videoContainer.innerHTML = '';
+            framesContainer.innerHTML = '';
+
+            const video = document.createElement('video');
+            video.src = URL.createObjectURL(file);
+            video.controls = true;
+
+            video.addEventListener('loadeddata', function() {
+                videoContainer.appendChild(video);
+            });
+        });
+
+        splitButton.addEventListener('click', function() {
+            const video = document.querySelector('video');
+
+            if (!video) {
+                return;
+            }
+
+            // Clear existing frames
+            framesContainer.innerHTML = '';
+
+            // Extract frames
+            const numFrames = 10; // Change this to display more or fewer frames
+            const duration = video.duration;
+            const interval = duration / numFrames;
+
+            for (let i = 0; i < numFrames; i++) {
+                const time = i * interval;
+                video.currentTime = time;
+
+                const canvas = document.createElement('canvas');
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                const context = canvas.getContext('2d');
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                const img = new Image();
+                img.src = canvas.toDataURL();
+
+                // Append image element to the frames container
+                framesContainer.appendChild(img);
+            }
+        });
+    </script>
+</body>
+</html>
