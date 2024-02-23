@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Image Authenticity Checker</title>
+<style>
+  /* Add your CSS styles here */
+</style>
+</head>
+<body>
+  <h1>Image Authenticity Checker</h1>
+  <input type="file" accept="image/*" id="fileInput">
+  <button onclick="uploadImage()">Upload Image</button>
+  <div id="result"></div>
+
+  <script>
+    function uploadImage() {
+      var fileInput = document.getElementById('fileInput');
+      var file = fileInput.files[0];
+
+      if (file) {
+        var reader = new FileReader();
+        reader.onload = function(event) {
+          var imageData = event.target.result;
+
+          // Display the image
+          var resultDiv = document.getElementById('result');
+          resultDiv.innerHTML = '<img src="' + imageData + '" alt="Uploaded Image" style="max-width: 100%;">';
+
+          // Predict image authenticity
+          predictAuthenticity(file)
+            .then(authenticity => {
+              // Display the authenticity
+              resultDiv.innerHTML += '<p>The image is ' + authenticity + '</p>';
+            })
+            .catch(error => {
+              console.error('Error predicting authenticity:', error);
+            });
+        };
+        reader.readAsDataURL(file);
+      } else {
+        alert('Please select an image file.');
+      }
+    }
+
+    async function predictAuthenticity(file) {
+      // Placeholder function for authenticity prediction.
+      // Replace this with your own machine learning model or logic.
+      return new Promise((resolve, reject) => {
+        // Simulate an asynchronous operation (e.g., API request or model inference)
+        setTimeout(() => {
+          // Placeholder: Randomly predict 'Fake' or 'Real'
+          const authenticity = Math.random() < 0.5 ? 'Fake' : 'Real';
+          resolve(authenticity);
+        }, 1000); // Simulating a delay, replace with actual prediction logic
+      });
+    }
+  </script>
+</body>
+</html>
